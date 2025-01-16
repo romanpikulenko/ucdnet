@@ -8,7 +8,7 @@ urlpatterns = (
     [
         path("admin/", admin.site.urls),
         # Add graphql url
-        path("graphql", GraphQLView.as_view(graphiql=True)),
+        path("graphql/", GraphQLView.as_view(graphiql=True)),
     ]
     + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
