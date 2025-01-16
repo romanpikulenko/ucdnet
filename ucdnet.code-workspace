@@ -1,0 +1,17 @@
+{
+    "folders": [
+        {
+            "path": "."
+        },
+    ],
+    "settings": {
+        "editor.formatOnSave": true,
+        "python-envs.pythonProjects": [
+            {
+                "path": "backend/gateway",
+                "envManager": "ms-python.python:venv",
+                "packageManager": "ms-python.python:pip"
+            }
+        ]
+    }
+}
