@@ -1,32 +1,9 @@
-from graphene import Mutation, ObjectType, String, Field, ID, List
-from graphene_django import DjangoObjectType
+from graphene import Mutation, ObjectType, String, Field, ID, List, Date
 from .models import User, Profile
+from .types import UserType, ProfileType
 
 
-class UserType(DjangoObjectType):
-    class Meta:
-        model = User
-        fields = (
-            "id",
-            "username",
-            "email",
-            "first_name",
-            "last_name",
-            "is_active",
-            "is_staff",
-            "is_superuser",
-            "last_login",
-            "date_joined",
-        )
-
-
-class ProfileType(DjangoObjectType):
-    class Meta:
-        model = Profile
-        fields = ("id", "user", "bio", "location", "birth_date", "created_at", "updated_at", "avatar", "cover_image")
-
-
-class QueryUser(ObjectType):
+class Query(ObjectType):
     users = List(UserType)
     user_by_id = Field(UserType, id=ID())
     user_by_username = Field(UserType, username=String())
@@ -118,20 +95,18 @@ class DeleteUserMutation(Mutation):
 
 class CreateProfileMutation(Mutation):
     class Arguments:
-        user_id = String(required=True)
+        user_id = ID(required=True)
         bio = String(required=False)
         location = String(required=False)
-        birth_date = String(required=False)
-        avatar = String(required=False)
-        cover_image = String(required=False)
+        birth_date = Date(required=False)
 
     profile = Field(ProfileType)
 
-    def mutate(self, info, user_id, bio=None, location=None, birth_date=None, avatar=None, cover_image=None):
+    def mutate(self, info, user_id, bio=None, location=None, birth_date=None):
         user = User.objects.get(id=user_id)
-        profile = Profile.objects.create(
-            user=user, bio=bio, location=location, birth_date=birth_date, avatar=avatar, cover_image=cover_image
-        )
+
+        profile = Profile.objects.create(user=user, bio=bio, location=location, birth_date=birth_date)
+
         return CreateProfileMutation(profile=profile)
 
 
@@ -140,9 +115,7 @@ class UpdateProfileMutation(Mutation):
         id = String(required=True)
         bio = String(required=False)
         location = String(required=False)
-        birth_date = String(required=False)
-        avatar = String(required=False)
-        cover_image = String(required=False)
+        birth_date = Date(required=False)
 
     profile = Field(ProfileType)
 
@@ -154,10 +127,7 @@ class UpdateProfileMutation(Mutation):
             profile.location = location
         if birth_date:
             profile.birth_date = birth_date
-        if avatar:
-            profile.avatar = avatar
-        if cover_image:
-            profile.cover_image = cover_image
+
         profile.save()
         return UpdateProfileMutation(profile=profile)
 

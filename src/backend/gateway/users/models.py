@@ -47,6 +47,16 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.username
 
 
+def resolve_avatar_path(instance, filename):
+    # Define your logic to generate the path for the avatar image
+    return f"users/{instance.user.id}/avatars/{filename}"
+
+
+def resolve_cover_image_path(instance, filename):
+    # Define your logic to generate the path for the cover image
+    return f"users/{instance.user.id}/cover_images/{filename}"
+
+
 class Profile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     bio = models.TextField(blank=True)
@@ -54,8 +64,8 @@ class Profile(models.Model):
     birth_date = models.DateField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    avatar = models.ImageField(upload_to="users/avatars/", blank=True, null=True)
-    cover_image = models.ImageField(upload_to="users/cover_images/", blank=True, null=True)
+    avatar = models.ImageField(upload_to=resolve_avatar_path, blank=True, null=True)
+    cover_image = models.ImageField(upload_to=resolve_cover_image_path, blank=True, null=True)
 
     def __str__(self):
         return self.user.username
