@@ -1,11 +1,10 @@
 from django.http import JsonResponse
 from django.views import View
 from .models import Profile
-
-# Create your views here.
 from django.shortcuts import get_object_or_404
 
 
+# Create your views here.
 class ProfileImageView(View):
     def post(self, request, *args, **kwargs):
         profile_id = request.POST["profile_id"]

@@ -147,3 +147,9 @@ GRAPHENE = {
         "graphql_jwt.middleware.JSONWebTokenMiddleware",
     ],
 }
+
+# Graphene JWT settings
+AUTHENTICATION_BACKENDS = [
+    "graphql_jwt.backends.JSONWebTokenBackend",
+    "django.contrib.auth.backends.ModelBackend",
+]

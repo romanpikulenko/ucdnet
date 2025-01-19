@@ -47,17 +47,15 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.username
 
 
-def resolve_avatar_path(instance, filename):
-    # Define your logic to generate the path for the avatar image
-    return f"users/{instance.user.id}/avatars/{filename}"
-
-
-def resolve_cover_image_path(instance, filename):
-    # Define your logic to generate the path for the cover image
-    return f"users/{instance.user.id}/cover_images/{filename}"
-
-
 class Profile(models.Model):
+    def resolve_avatar_path(instance, filename):
+        # Define your logic to generate the path for the avatar image
+        return f"users/{instance.user.id}/avatars/{filename}"
+
+    def resolve_cover_image_path(instance, filename):
+        # Define your logic to generate the path for the cover image
+        return f"users/{instance.user.id}/cover_images/{filename}"
+
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     bio = models.TextField(blank=True)
     location = models.CharField(max_length=30, blank=True)
