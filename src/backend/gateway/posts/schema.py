@@ -53,6 +53,7 @@ class UpdatePost(graphene.Mutation):
 
     post = graphene.Field(PostType)
 
+    @login_required  # Ensure the user is authenticated
     def mutate(self, info, post_id, title, content):
         user = info.context.user  # Retrieve the user from the context
         post = Post.objects.filter(post_id=post_id, user=user).first()
@@ -72,6 +73,7 @@ class DeletePost(graphene.Mutation):
 
     ok = graphene.String()
 
+    @login_required  # Ensure the user is authenticated
     def mutate(self, info, post_id):
         user = info.context.user  # Retrieve the user from the context
         post = Post.objects.filter(id=post_id, user=user).first()
@@ -89,6 +91,7 @@ class CreateComment(graphene.Mutation):
 
     comment = graphene.Field(CommentType)
 
+    @login_required  # Ensure the user is authenticated
     def mutate(self, info, post_id, content):
         user = info.context.user  # Retrieve the user from the context
         post = get_object_or_404(Post, id=post_id)
@@ -104,6 +107,7 @@ class UpdateComment(graphene.Mutation):
 
     comment = graphene.Field(CommentType)
 
+    @login_required  # Ensure the user is authenticated
     def mutate(self, info, comment_id, content):
         user = info.context.user  # Retrieve the user from the context
         comment = Comment.objects.filter(id=comment_id, author=user).first()
@@ -122,6 +126,7 @@ class DeleteComment(graphene.Mutation):
 
     ok = graphene.String()
 
+    @login_required  # Ensure the user is authenticated
     def mutate(self, info, comment_id):
         user = info.context.user  # Retrieve the user from the context
         comment = Comment.objects.filter(id=comment_id, author=user).first()
@@ -141,6 +146,7 @@ class ToggleFollowUser(graphene.Mutation):
     ok = graphene.String()
 
     @classmethod
+    @login_required  # Ensure the user is authenticated
     def mutate(cls, root, info, user_id):
         user = info.context.user
         following = get_object_or_404(User, id=user_id)
@@ -159,6 +165,7 @@ class ToggleLikePost(graphene.Mutation):
     ok = graphene.String()
 
     @classmethod
+    @login_required  # Ensure the user is authenticated
     def mutate(cls, root, info, post_id):
         user = info.context.user
         post = Post.objects.get(id=post_id)
@@ -177,6 +184,7 @@ class ToggleLikeComment(graphene.Mutation):
     ok = graphene.String()
 
     @classmethod
+    @login_required  # Ensure the user is authenticated
     def mutate(cls, root, info, comment_id):
         user = info.context.user
         comment = Comment.objects.get(id=comment_id)

@@ -1,17 +1,19 @@
-from graphene import Mutation, ObjectType, String, Field, ID, List, Date
-from .models import User, Profile
-from .types import UserType, ProfileType
+import graphene
+from graphql_jwt.decorators import login_required
+
+from .models import Profile, User
+from .types import ProfileType, UserType
 
 
-class Query(ObjectType):
-    users = List(UserType)
-    user_by_id = Field(UserType, id=ID())
-    user_by_username = Field(UserType, username=String())
-    user_by_email = Field(UserType, email=String())
-    profiles = List(ProfileType)
-    profile_by_user_id = Field(ProfileType, user_id=String())
-    profile_by_username = Field(ProfileType, username=String())
-    profile_by_email = Field(ProfileType, email=String())
+class Query(graphene.ObjectType):
+    users = graphene.List(UserType)
+    user_by_id = graphene.Field(UserType, id=graphene.ID())
+    user_by_username = graphene.Field(UserType, username=graphene.String())
+    user_by_email = graphene.Field(UserType, email=graphene.String())
+    profiles = graphene.List(ProfileType)
+    profile_by_user_id = graphene.Field(ProfileType, user_id=graphene.String())
+    profile_by_username = graphene.Field(ProfileType, username=graphene.String())
+    profile_by_email = graphene.Field(ProfileType, email=graphene.String())
 
     def resolve_users(self, info):
         return User.objects.all()
@@ -38,15 +40,15 @@ class Query(ObjectType):
         return Profile.objects.get(user__email=email)
 
 
-class CreateUserMutation(Mutation):
+class CreateUserMutation(graphene.Mutation):
     class Arguments:
-        username = String(required=True)
-        password = String(required=True)
-        email = String(required=True)
-        first_name = String(required=False)
-        last_name = String(required=False)
+        username = graphene.String(required=True)
+        password = graphene.String(required=True)
+        email = graphene.String(required=True)
+        first_name = graphene.String(required=False)
+        last_name = graphene.String(required=False)
 
-    user = Field(UserType)
+    user = graphene.Field(UserType)
 
     def mutate(self, info, username, password, email, first_name=None, last_name=None):
         user = User.objects.create_user(
@@ -55,19 +57,20 @@ class CreateUserMutation(Mutation):
         return CreateUserMutation(user=user)
 
 
-class UpdateUserMutation(Mutation):
+class UpdateUserMutation(graphene.Mutation):
     class Arguments:
-        id = String(required=True)
-        username = String(required=False)
-        password = String(required=False)
-        email = String(required=False)
-        first_name = String(required=False)
-        last_name = String(required=False)
+        username = graphene.String(required=False)
+        password = graphene.String(required=False)
+        email = graphene.String(required=False)
+        first_name = graphene.String(required=False)
+        last_name = graphene.String(required=False)
 
-    user = Field(UserType)
+    user = graphene.Field(UserType)
 
-    def mutate(self, info, id, username=None, password=None, email=None, first_name=None, last_name=None):
-        user = User.objects.get(id=id)
+    @login_required
+    def mutate(self, info, username=None, password=None, email=None, first_name=None, last_name=None):
+        user = info.context.user
+
         if username:
             user.username = username
         if password:
@@ -82,69 +85,86 @@ class UpdateUserMutation(Mutation):
         return UpdateUserMutation(user=user)
 
 
-class DeleteUserMutation(Mutation):
+class DeleteUserMutation(graphene.Mutation):
     class Arguments:
-        id = String(required=True)
+        pass
 
-    ok = String()
+    ok = graphene.String()
 
-    def mutate(self, info, id):
-        User.objects.get(id=id).delete()
+    @login_required
+    def mutate(self, info):
+        user = info.context.user
+        user.delete()
         return DeleteUserMutation(ok="User deleted successfully")
 
 
-class CreateProfileMutation(Mutation):
+class CreateProfileMutation(graphene.Mutation):
     class Arguments:
-        user_id = ID(required=True)
-        bio = String(required=False)
-        location = String(required=False)
-        birth_date = Date(required=False)
+        bio = graphene.String(required=False)
+        location = graphene.String(required=False)
+        birth_date = graphene.Date(required=False)
 
-    profile = Field(ProfileType)
+    profile = graphene.Field(ProfileType)
+    ok = graphene.String()
 
-    def mutate(self, info, user_id, bio=None, location=None, birth_date=None):
-        user = User.objects.get(id=user_id)
+    @login_required
+    def mutate(self, info, bio=None, location=None, birth_date=None):
+        user = info.context.user
+        profile = Profile.objects.get(user=user)
 
-        profile = Profile.objects.create(user=user, bio=bio, location=location, birth_date=birth_date)
+        if not profile:
+            profile = Profile.objects.create(user=user, bio=bio, location=location, birth_date=birth_date)
+            return CreateProfileMutation(profile=profile, ok="Profile created successfully")
 
-        return CreateProfileMutation(profile=profile)
+        return CreateProfileMutation(profile=profile, ok="Profile already exists")
 
 
-class UpdateProfileMutation(Mutation):
+class UpdateProfileMutation(graphene.Mutation):
     class Arguments:
-        id = String(required=True)
-        bio = String(required=False)
-        location = String(required=False)
-        birth_date = Date(required=False)
+        bio = graphene.String(required=False)
+        location = graphene.String(required=False)
+        birth_date = graphene.Date(required=False)
 
-    profile = Field(ProfileType)
+    profile = graphene.Field(ProfileType)
+    ok = graphene.String()
 
-    def mutate(self, info, id, bio=None, location=None, birth_date=None, avatar=None, cover_image=None):
-        profile = Profile.objects.get(id=id)
-        if bio:
-            profile.bio = bio
-        if location:
-            profile.location = location
-        if birth_date:
-            profile.birth_date = birth_date
+    @login_required
+    def mutate(self, info, id, bio=None, location=None, birth_date=None):
+        user = info.context.user
+        profile = Profile.objects.get(user=user)
 
-        profile.save()
-        return UpdateProfileMutation(profile=profile)
+        if profile:
+            if bio:
+                profile.bio = bio
+            if location:
+                profile.location = location
+            if birth_date:
+                profile.birth_date = birth_date
+
+            profile.save()
+            return UpdateProfileMutation(profile=profile, ok="Profile updated successfully")
+        return UpdateProfileMutation(ok="Profile not found")
 
 
-class DeleteProfileMutation(Mutation):
+class DeleteProfileMutation(graphene.Mutation):
     class Arguments:
-        id = String(required=True)
+        pass
 
-    ok = String()
+    ok = graphene.String()
 
-    def mutate(self, info, id):
-        Profile.objects.get(id=id).delete()
-        return DeleteProfileMutation(ok="Profile deleted successfully")
+    @login_required
+    def mutate(self, info):
+        user = info.context.user
+        profile = Profile.objects.get(user=user)
+
+        if profile:
+            profile.delete()
+            return DeleteProfileMutation(ok="Profile deleted successfully")
+        return DeleteProfileMutation(ok="Profile not found")
 
 
 # Aggregate mutation class
-class Mutation(ObjectType):
+class Mutation(graphene.ObjectType):
     create_user = CreateUserMutation.Field()
     update_user = UpdateUserMutation.Field()
     delete_user = DeleteUserMutation.Field()
