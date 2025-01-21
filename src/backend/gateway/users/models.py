@@ -1,7 +1,7 @@
-from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
-from django.contrib.auth.models import PermissionsMixin
 from django.conf import settings
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.db import models
+from django.db.models.signals import post_save
 
 
 class UserManager(BaseUserManager):
@@ -57,8 +57,8 @@ class Profile(models.Model):
         return f"users/{instance.user.id}/cover_images/{filename}"
 
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    bio = models.TextField(blank=True)
-    location = models.CharField(max_length=30, blank=True)
+    bio = models.TextField(blank=True, null=True)
+    location = models.CharField(max_length=30, blank=True, null=True)
     birth_date = models.DateField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -67,3 +67,11 @@ class Profile(models.Model):
 
     def __str__(self):
         return self.user.username
+
+    @staticmethod
+    def create_profile(sender, instance, created, **kwargs):
+        if created:
+            Profile.objects.create(user=instance)
+
+
+post_save.connect(Profile.create_profile, sender=User)

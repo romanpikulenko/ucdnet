@@ -7,5 +7,11 @@
 - [x] Add Django view to upload media files to posts
 
 ## 2025-01-21
-- [ ] Try django-graphql-auth https://django-graphql-auth.readthedocs.io/en/latest/installation/
+- [x] Try django-graphql-auth https://django-graphql-auth.readthedocs.io/en/latest/installation/
+  The auth is depricated so I am not going to use it but it is a good example
+
+## 2025-01-22
+- [ ] Automatically create Profile for each user
+- [ ] Add email confirmation
+  
 

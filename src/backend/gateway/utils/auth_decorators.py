@@ -5,7 +5,7 @@ from graphql_jwt import exceptions, shortcuts, utils
 
 def view_login_required(func):
     """
-    Decorator for checking if user is logged in
+    Decorator to setup user from request Authentication header
     """
 
     @wraps(func)
