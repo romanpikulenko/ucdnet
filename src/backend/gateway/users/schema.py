@@ -1,5 +1,6 @@
 import graphene
 from graphql_jwt.decorators import login_required
+from utils import mail
 
 from .models import Profile, User
 from .types import ProfileType, UserType
@@ -49,12 +50,24 @@ class CreateUserMutation(graphene.Mutation):
         last_name = graphene.String(required=False)
 
     user = graphene.Field(UserType)
+    ok = graphene.String()
 
     def mutate(self, info, username, password, email, first_name=None, last_name=None):
         user = User.objects.create_user(
-            username=username, password=password, email=email, first_name=first_name, last_name=last_name
+            username=username,
+            password=password,
+            email=email,
+            first_name=first_name,
+            last_name=last_name,
+            is_active=False,
         )
-        return CreateUserMutation(user=user)
+
+        base_url = info.context.build_absolute_uri("/")
+        print(base_url)
+        # Send email verification
+        mail.send_verification_email(user, base_url)
+
+        return CreateUserMutation(user=user, ok="User created successfully. Check your email to verify your account.")
 
 
 class UpdateUserMutation(graphene.Mutation):
@@ -163,11 +176,31 @@ class DeleteProfileMutation(graphene.Mutation):
         return DeleteProfileMutation(ok="Profile not found")
 
 
+class VerifyUserEmail(graphene.Mutation):
+    class Arguments:
+        token = graphene.String(required=True)
+
+    ok = graphene.String()
+
+    @login_required
+    def mutate(self, info, token):
+        email = mail.check_verification_token(token)
+
+        user = User.objects.get(email=email)
+
+        if user:
+            user.is_active = True
+            user.save()
+            return VerifyUserEmail(ok="Email verified successfully")
+        return VerifyUserEmail(ok="Email verification failed")
+
+
 # Aggregate mutation class
 class Mutation(graphene.ObjectType):
     create_user = CreateUserMutation.Field()
     update_user = UpdateUserMutation.Field()
     delete_user = DeleteUserMutation.Field()
+    verify_user = VerifyUserEmail.Field()
     create_profile = CreateProfileMutation.Field()
     update_profile = UpdateProfileMutation.Field()
     delete_profile = DeleteProfileMutation.Field()

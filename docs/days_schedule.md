@@ -11,7 +11,7 @@
   The auth is depricated so I am not going to use it but it is a good example
 
 ## 2025-01-22
-- [ ] Automatically create Profile for each user
+- [x] Automatically create Profile for each user
 - [ ] Add email confirmation
   
 

@@ -12,6 +12,9 @@
                 "envManager": "ms-python.python:venv",
                 "packageManager": "ms-python.python:pip"
             }
-        ]
+        ],
+        "Codegeex.Comment.LanguagePreference": "English",
+        "Codegeex.SidebarUI.LanguagePreference": "English",
+        "Codegeex.Chat.LanguagePreference": "English"
     }
 }
