@@ -63,11 +63,28 @@ class CreateUserMutation(graphene.Mutation):
         )
 
         base_url = info.context.build_absolute_uri("/")
-        print(base_url)
         # Send email verification
         mail.send_verification_email(user, base_url)
 
         return CreateUserMutation(user=user, ok="User created successfully. Check your email to verify your account.")
+
+
+class ResendEmailConfirmationMutation(graphene.Mutation):
+    class Arguments:
+        email = graphene.String(required=True)
+        password = graphene.String(required=True)
+
+    ok = graphene.String()
+
+    def mutate(self, info, email, password):
+        user = User.objects.get(email=email)
+        if user.check_password(password):
+            base_url = info.context.build_absolute_uri("/")
+            # Send email verification
+            mail.send_verification_email(user, base_url)
+            return ResendEmailConfirmationMutation(ok="Email sent")
+        else:
+            raise Exception("Invalid password")
 
 
 class UpdateUserMutation(graphene.Mutation):
@@ -198,6 +215,7 @@ class VerifyUserEmail(graphene.Mutation):
 # Aggregate mutation class
 class Mutation(graphene.ObjectType):
     create_user = CreateUserMutation.Field()
+    resend_email_confirmation = ResendEmailConfirmationMutation.Field()
     update_user = UpdateUserMutation.Field()
     delete_user = DeleteUserMutation.Field()
     verify_user = VerifyUserEmail.Field()

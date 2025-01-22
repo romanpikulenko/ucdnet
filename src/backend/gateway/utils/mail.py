@@ -7,8 +7,11 @@ from django.core.mail import send_mail
 
 def send_verification_email(user, base_url):
     token = jwt.encode(
-        {"email": user.email, "exp": datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days=1)},
-        settings.EMAIL_CONF_JWT_SECRET,
+        {
+            "email": user.email,
+            "exp": datetime.datetime.now(datetime.timezone.utc) + settings.AUTH_JWT["EMAIL_CONF_EXPIRATION_DELTA"],
+        },
+        settings.AUTH_JWT["EMAIL_CONF_JWT_SECRET"],
         algorithm="HS256",
     )
     subject = "Verify your email"
@@ -20,7 +23,7 @@ def send_verification_email(user, base_url):
 
 def check_verification_token(token):
     try:
-        decoded = jwt.decode(token, settings.EMAIL_CONF_JWT_SECRET, algorithms=["HS256"])
+        decoded = jwt.decode(token, settings.AUTH_JWT["EMAIL_CONF_JWT_SECRET"], algorithms=["HS256"])
         return decoded["email"]
     except jwt.ExpiredSignatureError:
         # Signature has expired

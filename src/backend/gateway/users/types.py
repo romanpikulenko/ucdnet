@@ -1,5 +1,6 @@
 from graphene_django import DjangoObjectType
-from .models import User, Profile
+
+from .models import Profile, User
 
 
 class UserType(DjangoObjectType):

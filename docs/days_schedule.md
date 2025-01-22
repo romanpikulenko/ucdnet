@@ -9,9 +9,13 @@
 ## 2025-01-21
 - [x] Try django-graphql-auth https://django-graphql-auth.readthedocs.io/en/latest/installation/
   The auth is depricated so I am not going to use it but it is a good example
+- [x] Automatically create Profile for each user
+- [x] Add email confirmation
 
 ## 2025-01-22
-- [x] Automatically create Profile for each user
-- [ ] Add email confirmation
+- [ ] Add password reset
+- [x] Add resending email confirmation
+- [ ] Add email confirmation and password reset templates
+- [ ] Make refresh tokens one-times
   
 
