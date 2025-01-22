@@ -87,6 +87,20 @@ class ResendEmailConfirmationMutation(graphene.Mutation):
             raise Exception("Invalid password")
 
 
+class ResetPasswordMutation(graphene.Mutation):
+    class Arguments:
+        email = graphene.String(required=True)
+
+    ok = graphene.String()
+
+    def mutate(self, info, email):
+        user = User.objects.get(email=email)
+        base_url = info.context.build_absolute_uri("/")
+        # Send password reset email
+        mail.send_password_reset_email(user, base_url)
+        return ResetPasswordMutation(ok="Password reset email sent")
+
+
 class UpdateUserMutation(graphene.Mutation):
     class Arguments:
         username = graphene.String(required=False)
@@ -216,6 +230,7 @@ class VerifyUserEmail(graphene.Mutation):
 class Mutation(graphene.ObjectType):
     create_user = CreateUserMutation.Field()
     resend_email_confirmation = ResendEmailConfirmationMutation.Field()
+    reset_password = ResetPasswordMutation.Field()
     update_user = UpdateUserMutation.Field()
     delete_user = DeleteUserMutation.Field()
     verify_user = VerifyUserEmail.Field()

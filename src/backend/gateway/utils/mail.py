@@ -15,7 +15,23 @@ def send_verification_email(user, base_url):
         algorithm="HS256",
     )
     subject = "Verify your email"
-    message = f"Please click the following link to verify your email: {base_url}/users/verify/?token={token}"
+    message = f"Please click the following link to verify your email: {base_url}users/verify/?token={token}"
+    from_email = settings.DEFAULT_FROM_EMAIL
+    recipient_list = [user.email]
+    send_mail(subject, message, from_email, recipient_list)
+
+
+def send_password_reset_email(user, base_url):
+    token = jwt.encode(
+        {
+            "email": user.email,
+            "exp": datetime.datetime.now(datetime.timezone.utc) + settings.AUTH_JWT["PASSWORD_REV_EXPIRATION_DELTA"],
+        },
+        settings.AUTH_JWT["PASSWORD_REV_JWT_SECRET"],
+        algorithm="HS256",
+    )
+    subject = "Reset your password"
+    message = f"Please click the following link to reset your password: {base_url}users/reset-password/?token={token}"
     from_email = settings.DEFAULT_FROM_EMAIL
     recipient_list = [user.email]
     send_mail(subject, message, from_email, recipient_list)

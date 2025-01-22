@@ -6,4 +6,5 @@ from . import views
 urlpatterns = [
     path("profile-image/", csrf_exempt(views.ProfileImageView.as_view()), name="profile-image"),
     path("verify/", csrf_exempt(views.VerifyUserEmail.as_view()), name="verify"),
+    path("reset-password/", csrf_exempt(views.PasswordResetView.as_view()), name="reset-password"),
 ]

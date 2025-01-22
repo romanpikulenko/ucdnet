@@ -46,6 +46,8 @@ INSTALLED_APPS = [
     # Third party apps,
     "graphene_django",
     "graphql_jwt.refresh_token.apps.RefreshTokenConfig",
+    "crispy_forms",
+    "crispy_bootstrap5",
     # Local apps,
     "users",
     "posts",
@@ -66,7 +68,9 @@ ROOT_URLCONF = "core.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [
+            BASE_DIR / "templates",
+        ],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -191,3 +195,7 @@ else:
     EMAIL_PORT = 587
     EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
     EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
+
+# crispy forms settings
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
