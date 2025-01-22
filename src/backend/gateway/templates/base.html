@@ -41,6 +41,12 @@
 
   <main>
     <div class="container mt-4">
+      {% for message in messages %}
+      <div class="alert {{ message.tags }} alert-dismissible shadow fade show" role="alert">
+        {{ message | safe }}
+      </div>
+      {% endfor %}
+
       {% block content %}
       <!-- Page content goes here -->
       {% endblock %}

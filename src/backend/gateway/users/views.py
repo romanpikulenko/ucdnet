@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.views import View
@@ -37,17 +38,12 @@ class VerifyUserEmail(View):
         if user:
             user.is_active = True
             user.save()
-            # return users/email_verification.html with success message
-            return render(
-                request,
-                "users/user_operation_result.html",
-                {"message": "Email verified successfully. Your account is activated", "status": True},
-            )
+            messages.info(request, "Email verified successfully. Your account is activated")
+            return redirect("home")
 
         else:
-            return render(
-                request, "users/user_operation_result.html", {"message": "Email verification failed", "status": False}
-            )
+            messages.error(request, "Email verification failed")
+            return redirect("home")
 
 
 class PasswordResetView(View):
@@ -61,7 +57,8 @@ class PasswordResetView(View):
             form = ResetPasswordForm()
             return render(request, "users/reset_password.html", {"user": user, "form": form})
         else:
-            return render(request, "users/user_operation_result.html", {"message": "User not found", "status": False})
+            messages.error(request, "User not found")
+            return redirect("home")
 
     def post(self, request, *args, **kwargs):
         token = request.GET.get("token")
@@ -70,7 +67,8 @@ class PasswordResetView(View):
         user = User.objects.filter(email=email).first()
 
         if not user:
-            return render(request, "users/user_operation_result.html", {"message": "User not found", "status": False})
+            messages.error(request, "User not found")
+            return redirect("home")
 
         form = ResetPasswordForm(request.POST)
 
@@ -78,10 +76,7 @@ class PasswordResetView(View):
             password = form.cleaned_data.get("password")
             user.set_password(password)
             user.save()
-            return render(
-                request,
-                "users/user_operation_result.html",
-                {"message": "Password reset successfully", "status": True},
-            )
+            messages.info(request, "Password reset successfully")
+            return redirect("home")
 
         return render(request, "users/reset_password.html", {"user": user, "form": form})

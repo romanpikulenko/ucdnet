@@ -8,6 +8,8 @@ from graphene_django.views import GraphQLView
 urlpatterns = (
     [
         path("admin/", admin.site.urls),
+        # Add urls from home.urls
+        path("", include("home.urls")),
         # Add urls from users.urls
         path("users/", include("users.urls")),
         # Add urls from posts.urls
