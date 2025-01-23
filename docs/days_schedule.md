@@ -18,7 +18,7 @@
 - [x] Add email confirmation and password reset templates
 
 ## 2025-01-23
-- [ ] Make refresh tokens one-times
-- [ ] Setup relay query mutations
+- [x] Make refresh tokens one-times
+- [x] Setup relay queries
   
 

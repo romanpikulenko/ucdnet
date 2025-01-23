@@ -1,10 +1,11 @@
 import graphene
 import graphql_jwt
 import posts.schema
+import posts.schema_relay
 import users.schema
 
 
-class Query(users.schema.Query, posts.schema.Query, graphene.ObjectType):
+class Query(users.schema.Query, posts.schema.Query, posts.schema_relay.Query, graphene.ObjectType):
     pass
 
 

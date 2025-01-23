@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "graphql_jwt.refresh_token.apps.RefreshTokenConfig",
     "crispy_forms",
     "crispy_bootstrap5",
+    "django_filters",
     # Local apps,
     "home",
     "users",
