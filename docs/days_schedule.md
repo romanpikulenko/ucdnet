@@ -21,4 +21,8 @@
 - [x] Make refresh tokens one-times
 - [x] Setup relay queries
   
+## 2025-01-24
+- [ ] Create angula fronend
+- [ ] Install apollo client
+- [ ] Create home component
 
