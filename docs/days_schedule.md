@@ -13,9 +13,12 @@
 - [x] Add email confirmation
 
 ## 2025-01-22
-- [ ] Add password reset
+- [x] Add password reset
 - [x] Add resending email confirmation
-- [ ] Add email confirmation and password reset templates
+- [x] Add email confirmation and password reset templates
+
+## 2025-01-23
 - [ ] Make refresh tokens one-times
+- [ ] Setup relay query mutations
   
 
