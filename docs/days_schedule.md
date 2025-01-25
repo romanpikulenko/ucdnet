@@ -22,7 +22,12 @@
 - [x] Setup relay queries
   
 ## 2025-01-24
-- [ ] Create angula fronend
-- [ ] Install apollo client
-- [ ] Create home component
+- [x] Create angula fronend
+
+## 2025-01-25
+- [x] Create the fronend root and home page schemes
+
+## 2025-01-26
+- [ ] Run through an angular tutorial
+- [ ] Create root component
 
