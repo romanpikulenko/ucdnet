@@ -176,6 +176,6 @@ cython_debug/
 # static files
 src/backend/gateway/staticfiles/
 src/backend/gateway/media/
-assets/
+/assets/
 
 .bkp

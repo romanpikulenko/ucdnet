@@ -1,5 +1,5 @@
 from graphene_django import DjangoObjectType
-from .models import Post, Comment, LikePost, LikeComment, Follow
+from .models import Post, PostMedia, Comment, LikePost, LikeComment, Follow
 
 
 class PostType(DjangoObjectType):
@@ -29,4 +29,10 @@ class LikeCommentType(DjangoObjectType):
 class FollowType(DjangoObjectType):
     class Meta:
         model = Follow
+        # interfaces = (graphene.relay.Node,)
+
+
+class PostMediaType(DjangoObjectType):
+    class Meta:
+        model = PostMedia
         # interfaces = (graphene.relay.Node,)

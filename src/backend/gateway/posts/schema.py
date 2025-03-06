@@ -3,12 +3,13 @@ from django.shortcuts import get_object_or_404
 from graphql_jwt.decorators import login_required
 from users.models import User
 
-from .models import Comment, Follow, LikeComment, LikePost, Post
-from .types import CommentType, FollowType, LikeCommentType, LikePostType, PostType
+from .models import Comment, Follow, LikeComment, LikePost, Post, PostMedia
+from .types import CommentType, FollowType, LikeCommentType, LikePostType, PostType, PostMediaType
 
 
 class Query(graphene.ObjectType):
     posts = graphene.List(PostType)
+    post_media = graphene.List(PostMediaType)
     comments = graphene.List(CommentType)
     like_posts = graphene.List(LikePostType)
     like_comments = graphene.List(LikeCommentType)
@@ -16,6 +17,9 @@ class Query(graphene.ObjectType):
 
     def resolve_posts(self, info):
         return Post.objects.all()
+
+    def resolve_post_media(self, info):
+        return PostMedia.objects.all()
 
     def resolve_comments(self, info):
         return Comment.objects.all()
@@ -36,13 +40,14 @@ class CreatePost(graphene.Mutation):
         content = graphene.String(required=True)
 
     post = graphene.Field(PostType)
+    ok = graphene.String()
 
     @login_required  # Ensure the user is authenticated
     def mutate(self, info, title, content):
         user = info.context.user  # Retrieve the user from the context
         post = Post(title=title, content=content, user=user)  # Add the user to the Post
         post.save()
-        return CreatePost(post=post)
+        return CreatePost(post=post, ok="Post created successfully")
 
 
 class UpdatePost(graphene.Mutation):
@@ -52,6 +57,7 @@ class UpdatePost(graphene.Mutation):
         content = graphene.String(required=True)
 
     post = graphene.Field(PostType)
+    ok = graphene.String()
 
     @login_required  # Ensure the user is authenticated
     def mutate(self, info, post_id, title, content):
@@ -62,9 +68,9 @@ class UpdatePost(graphene.Mutation):
             post.title = title
             post.content = content
             post.save()
-            return UpdatePost(post=post)
+            return UpdatePost(post=post, ok="Post updated successfully")
 
-        raise Exception("You are not authorized to update this post")
+        return UpdatePost(post=None, ok="Post not found")
 
 
 class DeletePost(graphene.Mutation):
@@ -80,8 +86,33 @@ class DeletePost(graphene.Mutation):
 
         if post:
             post.delete()
+            return DeletePost(ok="Post deleted successfully")
 
-        raise Exception("You are not authorized to delete this post")
+        return DeletePost(ok="Post not found")
+
+
+# Delete PostMedia mutation use post_id and order to find out needed PostMedia
+class DeletePostMedia(graphene.Mutation):
+    class Arguments:
+        post_id = graphene.ID(required=True)
+        order = graphene.Int(required=True)
+
+    ok = graphene.String()
+
+    @login_required  # Ensure the user is authenticated
+    def mutate(self, info, post_id, order):
+        user = info.context.user
+        post = Post.objects.filter(id=post_id, user=user).first()
+
+        if post:
+            post_media = PostMedia.objects.filter(post=post, order=order).first()
+            if post_media:
+                post_media.delete()
+                return DeletePostMedia(ok="PostMedia deleted successfully")
+            else:
+                return DeletePostMedia(ok="PostMedia not found")
+
+        return DeletePostMedia(ok="Post not found")
 
 
 class CreateComment(graphene.Mutation):
@@ -90,6 +121,7 @@ class CreateComment(graphene.Mutation):
         content = graphene.String(required=True)
 
     comment = graphene.Field(CommentType)
+    ok = graphene.String()
 
     @login_required  # Ensure the user is authenticated
     def mutate(self, info, post_id, content):
@@ -97,7 +129,7 @@ class CreateComment(graphene.Mutation):
         post = get_object_or_404(Post, id=post_id)
         comment = Comment(post=post, content=content, author=user)  # Add the user as the author of the Comment
         comment.save()
-        return CreateComment(comment=comment)
+        return CreateComment(comment=comment, ok="Comment created successfully")
 
 
 class UpdateComment(graphene.Mutation):
@@ -106,6 +138,7 @@ class UpdateComment(graphene.Mutation):
         content = graphene.String(required=True)
 
     comment = graphene.Field(CommentType)
+    ok = graphene.String()
 
     @login_required  # Ensure the user is authenticated
     def mutate(self, info, comment_id, content):
@@ -115,9 +148,9 @@ class UpdateComment(graphene.Mutation):
         if comment:
             comment.content = content
             comment.save()
-            return UpdateComment(comment=comment)
+            return UpdateComment(comment=comment, ok="Comment updated successfully")
 
-        raise Exception("You are not authorized to update this comment")
+        raise UpdateComment(comment=None, ok="Comment not found")
 
 
 class DeleteComment(graphene.Mutation):
@@ -135,7 +168,7 @@ class DeleteComment(graphene.Mutation):
             comment.delete()
             return DeleteComment(ok="Comment deleted successfully")
 
-        raise Exception("You are not authorized to delete this comment")
+        raise DeleteComment(ok="Comment not found")
 
 
 class ToggleFollowUser(graphene.Mutation):

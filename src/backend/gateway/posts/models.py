@@ -14,10 +14,33 @@ class Post(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="posts")
     title = models.CharField(max_length=255)
     content = models.TextField()
-    image = models.ImageField(upload_to=resolve_post_image_path, blank=True, null=True)
-    video = models.FileField(upload_to=resolve_post_video_path, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.title
+
+
+class PostMedia(models.Model):
+    def resolve_media_image_path(instance, filename):
+        # Define your logic to generate the path for the media image
+        return f"posts/{instance.post.id}/images/{filename}"
+
+    def resolve_media_video_path(instance, filename):
+        # Define your logic to generate the path for the media image
+        return f"posts/{instance.post.id}/videos/{filename}"
+
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="media_items")
+    order = models.IntegerField(default=0)
+    title = models.CharField(max_length=255, blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+    image = models.ImageField(upload_to=resolve_media_image_path, blank=True, null=True)
+    video = models.FileField(upload_to=resolve_media_video_path, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = (("post", "order"),)
 
     def __str__(self):
         return self.title
