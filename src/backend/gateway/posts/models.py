@@ -1,6 +1,14 @@
 from django.db import models
 from django.conf import settings
 
+REACTION_TYPES = [
+    ("like", "Like"),
+    ("love", "Love"),
+    ("wow", "Wow"),
+    ("sad", "Sad"),
+    ("angry", "Angry"),
+]
+
 
 class Post(models.Model):
     def resolve_post_image_path(instance, filename):
@@ -13,7 +21,7 @@ class Post(models.Model):
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="posts")
     title = models.CharField(max_length=255)
-    content = models.TextField()
+    content = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -60,6 +68,7 @@ class Comment(models.Model):
 class LikePost(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="post_likes")
     post = models.ForeignKey("Post", on_delete=models.CASCADE, related_name="likes", null=True, blank=True)
+    reaction = models.CharField(max_length=50, choices=REACTION_TYPES, blank=True, null=True, default="like")
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -69,6 +78,7 @@ class LikePost(models.Model):
 class LikeComment(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="comment_likes")
     comment = models.ForeignKey("Comment", on_delete=models.CASCADE, related_name="likes", null=True, blank=True)
+    reaction = models.CharField(max_length=50, choices=REACTION_TYPES, blank=True, null=True, default="like")
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

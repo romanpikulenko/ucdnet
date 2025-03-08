@@ -1,0 +1,40 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/26.0.16 Chrome/132.0.6834.196 Electron/34.2.0 Safari/537.36" version="26.0.16">
+  <diagram name="Page-1" id="vhU3TeMGZkzMnP85VnX8">
+    <mxGraphModel dx="1110" dy="990" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="hGCxWTsR2YqV51pgIS8E-1" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="70" y="40" width="690" height="880" as="geometry" />
+        </mxCell>
+        <mxCell id="hGCxWTsR2YqV51pgIS8E-2" value="User Title" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="90" y="60" width="160" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="hGCxWTsR2YqV51pgIS8E-3" value="Follow/Unfollow" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="270" y="60" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="hGCxWTsR2YqV51pgIS8E-4" value="Posted date" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="90" y="110" width="120" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="hGCxWTsR2YqV51pgIS8E-5" value="Post menu" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="620" y="60" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="hGCxWTsR2YqV51pgIS8E-6" value="Post title" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="350" y="160" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="hGCxWTsR2YqV51pgIS8E-7" value="Carousel with media content of the post" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="90" y="220" width="650" height="500" as="geometry" />
+        </mxCell>
+        <mxCell id="hGCxWTsR2YqV51pgIS8E-8" value="Like&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp;Comment&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; Send&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; Share" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="90" y="860" width="650" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="hGCxWTsR2YqV51pgIS8E-9" value="Post text content if exists" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="90" y="720" width="650" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="hGCxWTsR2YqV51pgIS8E-10" value="Likes count, comments count, shares count" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="90" y="810" width="650" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

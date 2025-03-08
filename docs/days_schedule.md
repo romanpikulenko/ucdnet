@@ -90,5 +90,13 @@
 - [x] New post component
 
 ## 2025-03-06
-- [ ] Post component
-- [ ] Feed component
+- [x] PostMedia model
+- [x] Users and post models in UI
+
+## 2025-03-07
+- [x] Title service
+- [x] Post component skeleton
+- [x] Feed component
+
+## 2025-03-08
+- [ ] Post reaction, comment reaction

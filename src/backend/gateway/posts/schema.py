@@ -193,6 +193,7 @@ class ToggleFollowUser(graphene.Mutation):
 class ToggleLikePost(graphene.Mutation):
     class Arguments:
         post_id = graphene.ID(required=True)
+        reaction = graphene.String(required=False)
 
     like_post = graphene.Field(LikePostType)
     ok = graphene.String()
@@ -201,17 +202,28 @@ class ToggleLikePost(graphene.Mutation):
     @login_required  # Ensure the user is authenticated
     def mutate(cls, root, info, post_id):
         user = info.context.user
-        post = Post.objects.get(id=post_id)
-        like, created = LikePost.objects.get_or_create(user=user, post=post)
-        if not created:
-            like.delete()
-            return ToggleLikePost(like=like, ok="Post unliked successfully")
-        return ToggleLikePost(like_post=like, ok="Post liked successfully")
+        post = get_object_or_404(Post, id=post_id)
+        reaction = info.context.GET.get("reaction")
+        liked_post = LikePost.objects.filter(user=user, post=post).first()
+
+        if not liked_post:
+            reaction = reaction or "like"
+            LikePost.objects.create(user=user, post=post, reaction=reaction)
+            return ToggleLikePost(like_post=liked_post, ok="Post liked successfully")
+
+        if reaction:
+            liked_post.reaction = reaction
+            liked_post.save()
+            return ToggleLikePost(like_post=liked_post, ok="Post reaction updated successfully")
+        else:
+            liked_post.delete()
+            return ToggleLikePost(like_post=None, ok="Post unliked successfully")
 
 
 class ToggleLikeComment(graphene.Mutation):
     class Arguments:
         comment_id = graphene.ID(required=True)
+        reaction = graphene.String(required=False)
 
     like_comment = graphene.Field(LikeCommentType)
     ok = graphene.String()
@@ -220,12 +232,22 @@ class ToggleLikeComment(graphene.Mutation):
     @login_required  # Ensure the user is authenticated
     def mutate(cls, root, info, comment_id):
         user = info.context.user
-        comment = Comment.objects.get(id=comment_id)
-        like, created = LikeComment.objects.get_or_create(user=user, comment=comment)
-        if not created:
-            like.delete()
-            return ToggleLikeComment(like_comment=like, ok="Comment unliked successfully")
-        return ToggleLikeComment(like_comment=like, ok="Comment liked successfully")
+        comment = get_object_or_404(Comment, id=comment_id)
+        reaction = info.context.GET.get("reaction")
+        liked_comment = LikeComment.objects.filter(user=user, comment=comment).first()
+
+        if not liked_comment:
+            reaction = reaction or "like"
+            LikeComment.objects.create(user=user, comment=comment, reaction=reaction)
+            return ToggleLikeComment(like_comment=liked_comment, ok="Comment liked successfully")
+
+        if reaction:
+            liked_comment.reaction = reaction
+            liked_comment.save()
+            return ToggleLikeComment(like_comment=liked_comment, ok="Comment reaction updated successfully")
+        else:
+            liked_comment.delete()
+            return ToggleLikeComment(like_comment=None, ok="Comment unliked successfully")
 
 
 class Mutation(graphene.ObjectType):

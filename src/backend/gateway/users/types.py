@@ -17,6 +17,7 @@ class UserType(DjangoObjectType):
             "is_superuser",
             "last_login",
             "date_joined",
+            "profile",
         )
 
 
